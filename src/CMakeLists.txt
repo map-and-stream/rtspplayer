@@ -1,20 +1,55 @@
-set(LIBRARY_NAME log)
+cmake_minimum_required(VERSION 3.16)
+project(StreamViewPro LANGUAGES CXX)
 
-set(LOG_SOURCES
-console_logger.cpp
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
+set(CMAKE_AUTOMOC ON)
+set(CMAKE_AUTORCC ON)
+set(CMAKE_AUTOUIC ON)
+
+find_package(Qt6 REQUIRED COMPONENTS Core Gui Qml Quick QuickControls2 QuickWidgets)
+
+find_package(PkgConfig REQUIRED)
+pkg_check_modules(GSTREAMER REQUIRED
+    gstreamer-1.0
+    gstreamer-app-1.0
+    gstreamer-video-1.0
+    gstreamer-plugins-base-1.0
 )
 
-set(LOG_HEADERS
-logger.h
-console_logger.h
+if(NOT GSTREAMER_FOUND)
+    message(FATAL_ERROR "GStreamer not found")
+endif()
+
+qt_add_executable(${PROJECT_NAME}
+    main.cpp
+    FrameGrabber.cpp
+    FrameGrabber.h
+    VideoSurface.cpp
+    VideoSurface.h
+    qml.qrc
 )
 
-add_library(${LIBRARY_NAME} STATIC ${LOG_SOURCES})
+target_include_directories(${PROJECT_NAME}
+    PRIVATE
+    ${GSTREAMER_INCLUDE_DIRS}
+)
 
-# Keep headers associated with this target for IDEs, but do not propagate
-target_sources(${LIBRARY_NAME} PRIVATE ${LOG_HEADERS})
+link_directories(${GSTREAMER_LIBRARY_DIRS})
 
-target_include_directories(${LIBRARY_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
+target_compile_options(${PROJECT_NAME}
+    PRIVATE
+    ${GSTREAMER_CFLAGS_OTHER}
+)
 
-# Convenient namespaced alias for downstream targets
-add_library(${LIB_ALIAS} ALIAS ${LIBRARY_NAME})
+target_link_libraries(${PROJECT_NAME}
+    PRIVATE
+    Qt6::Core
+    Qt6::Gui
+    Qt6::Qml
+    Qt6::Quick
+    Qt6::QuickControls2
+    Qt6::QuickWidgets
+    ${GSTREAMER_LIBRARIES}
+)
