@@ -1,14 +1,16 @@
-cmake_minimum_required(VERSION 3.16)
-project(StreamViewPro LANGUAGES CXX)
+set(LIBRARY_NAME rtspplayer)
 
-set(CMAKE_CXX_STANDARD 17)
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(RTSPPLAYER_SOURCES
+    FrameGrabber.cpp
+    VideoSurface.cpp
+)
 
-set(CMAKE_AUTOMOC ON)
-set(CMAKE_AUTORCC ON)
-set(CMAKE_AUTOUIC ON)
+set(RTSPPLAYER_HEADERS
+    FrameGrabber.h
+    VideoSurface.h
+)
 
-find_package(Qt6 REQUIRED COMPONENTS Core Gui Qml Quick QuickControls2 QuickWidgets)
+
 
 find_package(PkgConfig REQUIRED)
 pkg_check_modules(GSTREAMER REQUIRED
@@ -22,29 +24,14 @@ if(NOT GSTREAMER_FOUND)
     message(FATAL_ERROR "GStreamer not found")
 endif()
 
-qt_add_executable(${PROJECT_NAME}
-    main.cpp
-    FrameGrabber.cpp
-    FrameGrabber.h
-    VideoSurface.cpp
-    VideoSurface.h
-    qml.qrc
+
+add_library(${LIBRARY_NAME} STATIC
+    ${RTSPPLAYER_SOURCES}
+    ${RTSPPLAYER_HEADERS}  # ← include headers in target (for IDEs)
 )
 
-target_include_directories(${PROJECT_NAME}
-    PRIVATE
-    ${GSTREAMER_INCLUDE_DIRS}
-)
-
-link_directories(${GSTREAMER_LIBRARY_DIRS})
-
-target_compile_options(${PROJECT_NAME}
-    PRIVATE
-    ${GSTREAMER_CFLAGS_OTHER}
-)
-
-target_link_libraries(${PROJECT_NAME}
-    PRIVATE
+target_link_libraries(${LIBRARY_NAME}
+    PUBLIC
     Qt6::Core
     Qt6::Gui
     Qt6::Qml
@@ -53,3 +40,19 @@ target_link_libraries(${PROJECT_NAME}
     Qt6::QuickWidgets
     ${GSTREAMER_LIBRARIES}
 )
+
+
+target_include_directories(${LIBRARY_NAME}
+    PUBLIC
+    ${CMAKE_CURRENT_SOURCE_DIR}
+    ${GSTREAMER_INCLUDE_DIRS}
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
+)
+
+target_compile_options(${LIBRARY_NAME}
+    PRIVATE
+    ${GSTREAMER_CFLAGS_OTHER}
+)
+
+# Convenient namespaced alias for downstream targets
+add_library(${LIB_ALIAS} ALIAS ${LIBRARY_NAME})

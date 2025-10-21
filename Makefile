@@ -13,8 +13,8 @@ clean:
 build:
 	@echo "Starting build process..."
 	make clean
-	cmake -B $(BUILD_DIR)
-	cmake --build $(BUILD_DIR)
+	cmake -B $(BUILD_DIR) -DCMAKE_PREFIX_PATH=/home/javad/Qt/6.9.3
+	cmake --build $(BUILD_DIR) --parallel
 	cp $(BUILD_DIR)/example/example $(OUTPUT_DIR)
-	cp $(BUILD_DIR)/lib/liblog.a $(OUTPUT_DIR)
+	cp $(BUILD_DIR)/src/librtspplayer.a $(OUTPUT_DIR)
 

@@ -1,8 +1,10 @@
 cmake_minimum_required(VERSION 3.10)
-project(log_example)
+project(rtspplayer_example)
 
-# Bring in the log library target
-add_subdirectory(../src ${CMAKE_BINARY_DIR}/lib)
 
-add_executable(example main.cpp)
-target_link_libraries(example PRIVATE ${LIB_ALIAS})
+# Find Qt6 components
+find_package(Qt6 REQUIRED COMPONENTS Core Gui Qml Quick)
+
+add_executable(example main.cpp qml.qrc )
+target_link_libraries(example PRIVATE ${LIB_ALIAS} Qt6::Core Qt6::Gui Qt6::Qml Qt6::Quick)
+
