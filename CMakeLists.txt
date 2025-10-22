@@ -11,7 +11,7 @@ set(CMAKE_AUTOUIC ON)
 cmake_policy(SET CMP0079 NEW)
 
 
-set(CMAKE_PREFIX_PATH "/home/javad/Qt/6.9.3/gcc_64")
+# set(CMAKE_PREFIX_PATH "/home/isiran/Qt/6.9.2/gcc_64")
 find_package(Qt6 REQUIRED COMPONENTS Core Gui Qml Quick QuickControls2 QuickWidgets)
 
 # Build the example
