@@ -1,13 +1,13 @@
 set(LIBRARY_NAME rtspplayer)
 
 set(RTSPPLAYER_SOURCES
-    FrameGrabber.cpp
-    VideoSurface.cpp
+    VideoSurfaceGL.cpp
+    GstFrameGrabber.cpp
 )
 
 set(RTSPPLAYER_HEADERS
-    FrameGrabber.h
-    VideoSurface.h
+    VideoSurfaceGL.h
+    GstFrameGrabber.h
 )
 
 
